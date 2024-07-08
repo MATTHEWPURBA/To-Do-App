@@ -9,7 +9,7 @@ export type User = {
   username: string; // User's username
   email: string; // User's email
   password: string; // User's password (hashed)
-  profileimage?: string; // User's profile image URL
+  profilePicture?: string; // User's profile image URL
 };
 
 const getDB = async () => {
@@ -34,6 +34,17 @@ export const getUserById = async (id: string | ObjectId) => {
     const db = await getDB(); // Get the database instance
     const objectId = typeof id === "string" ? new ObjectId(id) : id; // Convert id to ObjectId if it's a string
     const user = await db.collection<User>(COLLECTION_NAME).findOne({ _id: objectId }, { projection: { password: 0 } }); // Fetch the user by ID, excluding the password field
+    return user; // Return the user document
+  } catch (error) {
+    console.error("Error getting user by ID:", error); // Log error to console
+    throw new Error("Failed to get user by ID"); // Throw an error
+  }
+};
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const db = await getDB(); // Get the database instance
+    const user = await db.collection<User>(COLLECTION_NAME).findOne({ email }); // Fetch the user by ID, excluding the password field
     return user; // Return the user document
   } catch (error) {
     console.error("Error getting user by ID:", error); // Log error to console
