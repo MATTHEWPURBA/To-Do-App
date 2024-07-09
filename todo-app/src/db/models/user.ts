@@ -6,6 +6,7 @@ const DB_NAME = process.env.MONGO_DB_NAME; // Get the database name from environ
 const COLLECTION_NAME = "Users"; // Define the name of the collection
 
 export type User = {
+  _id: ObjectId;
   username: string; // User's username
   email: string; // User's email
   password: string; // User's password (hashed)

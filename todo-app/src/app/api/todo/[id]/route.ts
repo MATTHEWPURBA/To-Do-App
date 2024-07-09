@@ -1,4 +1,5 @@
 import { deleteActivity, getActivityById, updateActivity } from "@/db/models/todo";
+import { verifyToken } from "@/db/utils/jwt";
 import { actSchema } from "@/validators/activity.validator";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
@@ -28,7 +29,21 @@ export const PUT = async (request: NextRequest, { params }: GetActDetailParam) =
     const { id } = params;
     const body = await request.json();
     const parseBody = actSchema.parse(body);
-    const updatedAct = await updateActivity({ ...parseBody, id: new ObjectId(id) });
+
+    // Get authorId from decoded token
+    const token = request.cookies.get("accessToken");
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const decodedToken = verifyToken(token.value);
+    if (typeof decodedToken === "string" || !decodedToken._id) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const authorId = decodedToken._id;
+
+    const updatedAct = await updateActivity({ ...parseBody, id: new ObjectId(id), authorId });
     return NextResponse.json({ updatedAct }, { status: 200 }); // Return updated activity with status 200
   } catch (error) {
     console.log(error);

@@ -22,8 +22,6 @@ export const POST = async (request: Request) => {
       );
     }
 
-    console.log(body, "ini body");
-    console.log(user, "iiini user");
     const isPasswordValid = bcryptjs.compareSync(body.password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -44,17 +42,14 @@ export const POST = async (request: Request) => {
       },
       rahasia
     );
-    console.log(accessToken);
 
-    // const user = await
-    // const parsedBody = userSchema.parse(body);
-    // // console.log(parsedBody,"ini parsedBody  ")
-    // const createdUser = await createUser(parsedBody);
-    // return Response.json({ createdUser }, { status: 201 }); // Created status code for successful creation
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: "User login Successfully",
-      accessToken
     });
+
+    response.cookies.set("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 3600 });
+
+    return response;
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: error.issues[0].message }, { status: 400 }); // Bad request status for validation errors

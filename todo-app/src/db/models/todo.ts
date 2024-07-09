@@ -7,7 +7,7 @@ const COLLECTION_NAME = "Activity"; // Define the name of the collection
 // Define the Activity type
 export type Activity = {
   content: string;
-  authorId: string;
+  authorId: ObjectId;
   imgUrl?: string; // Make imgUrl optional
   typeColor: string; // typeColor is required in Activity type
   createdAt: string;
@@ -70,11 +70,13 @@ export const getActivityById = async (id: string | ObjectId) => {
 };
 
 // Function to create a new activity
-export const createActivity = async (newAct: ActivityInput) => {
+export const createActivity = async (newAct: ActivityInput & { authorId: string }) => {
   try {
     const db = await getDB();
+    const authorId = new ObjectId(newAct.authorId);
     const { insertedId } = await db.collection<Activity>(COLLECTION_NAME).insertOne({
       ...newAct,
+      authorId,
       typeColor: getTypeColor(newAct.status), // Set typeColor based on status
       createdAt: new Date().toISOString(), // Set createdAt to current date
       updatedAt: new Date().toISOString(), // Set updatedAt to current date
@@ -100,12 +102,15 @@ export const deleteActivity = async (id: string | ObjectId) => {
 };
 
 // Function to update an activity by ID
-export const updateActivity = async (updatedAct: ActivityInput & { id: string | ObjectId }) => {
+export const updateActivity = async (updatedAct: ActivityInput & { id: string | ObjectId, authorId: string }) => {
   try {
     const db = await getDB();
     const objectId = typeof updatedAct.id === "string" ? new ObjectId(updatedAct.id) : updatedAct.id; // Convert id to ObjectId if it's a string
+    const authorId = new ObjectId(updatedAct.authorId); // Convert authorId string to ObjectId
+
     const updateFields = {
       ...updatedAct,
+      authorId,
       typeColor: getTypeColor(updatedAct.status), // Set typeColor based on status
       updatedAt: new Date().toISOString(), // Set updatedAt to current date
     };
