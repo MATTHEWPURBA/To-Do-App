@@ -86,3 +86,33 @@ export const createActivity = async (newAct: ActivityInput) => {
     throw new Error("Failed to create Activity");
   }
 };
+
+// Function to delete an activity by ID
+export const deleteActivity = async (id: string | ObjectId) => {
+  try {
+    const db = await getDB();
+    const objectId = typeof id === "string" ? new ObjectId(id) : id; // Convert id to ObjectId if it's a string
+    await db.collection<Activity>(COLLECTION_NAME).deleteOne({ _id: objectId }); // Delete the activity by ID
+  } catch (error) {
+    console.error("Error deleting activity:", error); // Log error to console
+    throw new Error("Failed to delete activity"); // Throw an error
+  }
+};
+
+// Function to update an activity by ID
+export const updateActivity = async (updatedAct: ActivityInput & { id: string | ObjectId }) => {
+  try {
+    const db = await getDB();
+    const objectId = typeof updatedAct.id === "string" ? new ObjectId(updatedAct.id) : updatedAct.id; // Convert id to ObjectId if it's a string
+    const updateFields = {
+      ...updatedAct,
+      typeColor: getTypeColor(updatedAct.status), // Set typeColor based on status
+      updatedAt: new Date().toISOString(), // Set updatedAt to current date
+    };
+    await db.collection<Activity>(COLLECTION_NAME).updateOne({ _id: objectId }, { $set: updateFields }); // Update the activity by ID
+    return await getActivityById(objectId); // Return the updated activity
+  } catch (error) {
+    console.error("Error updating activity:", error); // Log error to console
+    throw new Error("Failed to update activity"); // Throw an error
+  }
+};

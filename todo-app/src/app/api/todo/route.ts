@@ -1,5 +1,5 @@
 // import { createActivity, getActivities } from "@/db/models/activity"; // Import model functions
-import { createActivity, getActivities } from "@/db/models/todo";
+import { createActivity, deleteActivity, getActivities, updateActivity } from "@/db/models/todo";
 import { actSchema } from "@/validators/activity.validator"; // Import the activity validation schema
 import { z } from "zod";
 
