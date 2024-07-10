@@ -8,7 +8,7 @@ import { userSchema } from "@/validators/user.validator";
 
 const rahasia = process.env.JWT_SECRET as string;
 
-export const loginSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
@@ -16,9 +16,9 @@ export const loginSchema = z.object({
 export const POST = async (request: Request) => {
   try {
     const body = await request.json();
-    const parsedBody = loginSchema.parse(body);
-    console.log(parsedBody, "ini parsed");
-    console.log(body, "ini body");
+    // const parsedBody = loginSchema.parse(body);
+    // console.log(parsedBody, "ini parsed");
+    // console.log(body, "ini body");
     const user = await getUserByEmail(body.email);
     if (!user) {
       return NextResponse.json(
