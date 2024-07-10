@@ -1,7 +1,7 @@
 import { getUserByEmail } from "@/db/models/user";
 
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import { string, z } from "zod";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -45,9 +45,10 @@ export const POST = async (request: Request) => {
 
     const response = NextResponse.json({
       message: "User login Successfully",
+
     });
 
-    response.cookies.set("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 3600 });
+    response.cookies.set("Authorization", `Bearer ${accessToken}`, { httpOnly: true, secure: true, maxAge: 3600 });
 
     return response;
   } catch (error) {

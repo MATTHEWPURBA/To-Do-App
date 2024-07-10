@@ -1,28 +1,44 @@
+import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyToken } from "./db/utils/jwt";
 
-export function middleware(request: NextRequest) {
+const rahasia = process.env.JWT_SECRET;
+export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/api/todo")) {
-    const token = request.cookies.get("accessToken");
+    const authorization = cookies().get("Authorization");
+    if (!authorization) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const tokenParts = authorization?.value.split(" ");
+    if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const token = tokenParts[1];
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    
-    // console.log(verifyToken(token.value),'ini token');
+    const secret = new TextEncoder().encode(rahasia);
+    const jwt = token;
 
-    // try {
-    //   const user = verifyToken(token.value);
-    //   if (typeof user !== "string" && user._id) {
-    //     request.headers.set("userId", user._id);
-    //   } else {
-    //     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    //   }
-    // } catch (error) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
+    const { payload } = await jwtVerify<{
+      _id: string;
+      username: string;
+      email: string;
+    }>(jwt, secret);
 
-    return NextResponse.next();
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("userId", payload._id);
+    requestHeaders.set("email", payload.email);
+    requestHeaders.set("username", payload.username);
+
+    const response = NextResponse.next({
+      request:{
+        headers:requestHeaders
+      }
+    })
+
+    return response;
   }
 }

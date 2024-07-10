@@ -2,6 +2,7 @@ import { deleteActivity, getActivityById, updateActivity } from "@/db/models/tod
 import { verifyToken } from "@/db/utils/jwt";
 import { actSchema } from "@/validators/activity.validator";
 import { ObjectId } from "mongodb";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -30,20 +31,11 @@ export const PUT = async (request: NextRequest, { params }: GetActDetailParam) =
     const body = await request.json();
     const parseBody = actSchema.parse(body);
 
-    // Get authorId from decoded token
-    const token = request.cookies.get("accessToken");
-    if (!token) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const headerList = headers();
+    const userId = headerList.get("userId");
+    const authorId = new ObjectId(userId as string);
 
-    const decodedToken = verifyToken(token.value);
-    if (typeof decodedToken === "string" || !decodedToken._id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    const authorId = decodedToken._id;
-
-    const updatedAct = await updateActivity({ ...parseBody, id: new ObjectId(id), authorId });
+    const updatedAct = await updateActivity({ ...parseBody, id: new ObjectId(id), authorId: authorId.toString() });
     return NextResponse.json({ updatedAct }, { status: 200 }); // Return updated activity with status 200
   } catch (error) {
     console.log(error);

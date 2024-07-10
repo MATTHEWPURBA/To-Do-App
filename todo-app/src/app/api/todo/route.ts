@@ -3,6 +3,7 @@ import { createActivity, deleteActivity, getActivities, updateActivity } from "@
 import { verifyToken } from "@/db/utils/jwt";
 import { actSchema } from "@/validators/activity.validator"; // Import the activity validation schema
 import { ObjectId } from "mongodb";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -21,18 +22,11 @@ export const POST = async (request: NextRequest) => {
   try {
     const body = await request.json(); // Parse request body
     const parsedBody = actSchema.parse(body); // Validate and parse body using actSchema
-    const token = request.cookies.get("accessToken");
-    if (!token) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
 
-    const decodedToken = verifyToken(token.value);
-    if (typeof decodedToken === "string" || !decodedToken._id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    const authorId = decodedToken._id.toString();
-    const createdAct = await createActivity({ ...parsedBody, authorId });
+    const headerList = headers();
+    const userId = headerList.get("userId");
+    const authorId = new ObjectId(userId as string);
+    const createdAct = await createActivity({ ...parsedBody, authorId: authorId.toString() });
 
     return Response.json({ createdAct }, { status: 201 }); // Return created activity ID with status 201
   } catch (error) {
