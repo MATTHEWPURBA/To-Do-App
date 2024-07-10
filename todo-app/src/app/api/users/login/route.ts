@@ -1,15 +1,24 @@
 import { getUserByEmail } from "@/db/models/user";
 
 import { NextResponse } from "next/server";
-import { string, z } from "zod";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
+import { userSchema } from "@/validators/user.validator";
 
 const rahasia = process.env.JWT_SECRET as string;
+
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+});
 
 export const POST = async (request: Request) => {
   try {
     const body = await request.json();
+    const parsedBody = loginSchema.parse(body);
+    console.log(parsedBody, "ini parsed");
+    console.log(body, "ini body");
     const user = await getUserByEmail(body.email);
     if (!user) {
       return NextResponse.json(
@@ -36,7 +45,7 @@ export const POST = async (request: Request) => {
 
     const accessToken = jwt.sign(
       {
-        _id: user._id,
+        _id: user._id.toString(),
         username: user.username,
         email: user.email,
       },
@@ -45,7 +54,6 @@ export const POST = async (request: Request) => {
 
     const response = NextResponse.json({
       message: "User login Successfully",
-
     });
 
     response.cookies.set("Authorization", `Bearer ${accessToken}`, { httpOnly: true, secure: true, maxAge: 3600 });

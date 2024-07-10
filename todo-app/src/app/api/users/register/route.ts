@@ -6,7 +6,7 @@ export const POST = async (request: Request) => {
   try {
     const body = await request.json();
     const parsedBody = userSchema.parse(body);
-    // console.log(parsedBody,"ini parsedBody  ")
+    console.log(parsedBody,"ini parsedBody  ")
     const createdUser = await createUser(parsedBody);
     return Response.json({ createdUser }, { status: 201 }); // Created status code for successful creation
   } catch (error) {
