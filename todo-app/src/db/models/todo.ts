@@ -102,7 +102,7 @@ export const deleteActivity = async (id: string | ObjectId) => {
 };
 
 // Function to update an activity by ID
-export const updateActivity = async (updatedAct: ActivityInput & { id: string | ObjectId, authorId: string }) => {
+export const updateActivity = async (updatedAct: ActivityInput & { id: string | ObjectId; authorId: string }) => {
   try {
     const db = await getDB();
     const objectId = typeof updatedAct.id === "string" ? new ObjectId(updatedAct.id) : updatedAct.id; // Convert id to ObjectId if it's a string
