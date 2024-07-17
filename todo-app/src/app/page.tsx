@@ -1,12 +1,13 @@
-import { ObjectId } from "mongodb";
 import { Metadata } from "next";
 import ActivityCard from "./components/ActivityCard";
+import Sidebar from "./components/Sidebar";
 import { FaPlus } from "react-icons/fa";
+import ClientSide from "./components/ClientSide";
 
 export type Activity = {
   _id: number;
   content: string;
-  authorId: ObjectId;
+  authorId: string;
   imgUrl?: string;
   typeColor: string;
   createdAt: string;
@@ -28,27 +29,25 @@ async function getData(): Promise<Activity[]> {
     throw new Error("failed to fetch data");
   }
   const data = await res.json();
-  console.log(data);
   return data.activities;
 }
 
 export default async function Home() {
-  const activities = await getData();
+  const activities = await getData(); // Fetch activities
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="max-w-4xl mx-auto p-4 w-full flex-1">
         <h1 className="text-4xl font-bold mb-4">My Task Board</h1>
         <p className="text-lg mb-6">Tasks to keep organized</p>
-        <div className="space-y-4">
-          {activities.map((activity) => (
-            <ActivityCard key={activity._id} activity={activity} />
-          ))}
-        </div>
+        <ClientSide activities={activities} /> 
+        {/* //Render ClientSide component with activities */}
       </div>
       <div className="sticky bottom-0 bg-white p-4 border-t border-gray-300 max-w-4xl mx-auto w-full">
         <button className="flex items-center bg-orange-100 text-opacity-80 text-black py-4 px-5 rounded-2xl w-full justify-start text-xl font-semibold border border-gray-200">
           <span className="bg-orange-400 p-3 rounded-full mr-4">
-            <FaPlus className="text-4xl text-white" />
+            <FaPlus className="text-4xl text-white" /> 
+            {/* //Render Plus icon */}
           </span>
           Add New Task
         </button>

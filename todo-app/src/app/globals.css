@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#sidebar {
+  transform: translateX(100%);
+}
+
+#sidebar.open {
+  transform: translateX(0);
+}
