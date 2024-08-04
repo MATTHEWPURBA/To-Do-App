@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Activity } from "../page"; // Import Activity type
 import { updateActivity } from "./UpdateActivity";
 import { useRouter } from "next/navigation";
+import IconPicker from "./IconPicker"; // Import IconPicker component
 
 // Define the props type for Sidebar
 type SidebarProps = {
@@ -43,7 +44,11 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
     content: "",
     description: "",
     status: "" as Status,
+    imgUrl: "", // Added imgUrl field
+
   });
+  const [selectedIcon, setSelectedIcon] = useState<string>(activity?.imgUrl ?? "");
+
 
   useEffect(() => {
     if (activity) {
@@ -51,7 +56,9 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
         content: activity.content,
         description: activity.description,
         status: activity.status,
+        imgUrl: activity.imgUrl ?? "", // Provide a default empty string if imgUrl is undefined
       });
+      setSelectedIcon(activity.imgUrl ?? ""); // Provide a default empty string if imgUrl is undefined
     }
   }, [activity]);
 
@@ -104,6 +111,7 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
       content: formData.content,
       description: formData.description,
       status: formData.status,
+      imgUrl: selectedIcon, // Include selectedIcon
     };
 
     if (activity?._id) {
@@ -124,9 +132,7 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
   return (
     <div id="sidebar" className="fixed right-0 top-0 w-1/3 h-full bg-gray-100 shadow-lg transform transition-transform duration-300 translate-x-full">
       <div className="p-4">
-        <button onClick={handleClose} className="text-red-500 font-bold mb-4">
-          Close
-        </button>
+        <button onClick={handleClose} className="text-red-500 font-bold mb-4">Close</button>
         {activity && (
           <>
             <h2 className="text-2xl font-bold mb-4">Edit Task</h2>
@@ -147,11 +153,11 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
                   <option value="won't do">Won't Do</option>
                 </select>
               </div>
-              <div className="mt-4">
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md">
-                  Save
-                </button>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Pick an Icon</label>
+                <IconPicker selectedIcon={selectedIcon} onSelectIcon={setSelectedIcon} />
               </div>
+              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
             </form>
           </>
         )}
