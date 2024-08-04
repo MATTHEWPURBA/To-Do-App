@@ -1,5 +1,5 @@
 // import { createActivity, getActivities } from "@/db/models/activity"; // Import model functions
-import { createActivity, deleteActivity, getActivities, updateActivity } from "@/db/models/todo";
+import { createActivity, deleteActivity, getActivities, getActivitiesByUser, updateActivity } from "@/db/models/todo";
 import { verifyToken } from "@/db/utils/jwt";
 import { actSchema } from "@/validators/activity.validator"; // Import the activity validation schema
 import { ObjectId } from "mongodb";
@@ -10,7 +10,13 @@ import { z } from "zod";
 // Handler for GET requests to fetch all activities
 export const GET = async () => {
   try {
-    const activities = await getActivities();
+    const headerList = headers();
+    const userId = headerList.get("userId");
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const authorId = new ObjectId(userId as string);
+    const activities = await getActivitiesByUser(authorId.toString());
     return Response.json({ activities }, { status: 200 }); // Return activities with status 200
   } catch (error) {
     return Response.json({ error }, { status: 500 }); // Return error with status 500

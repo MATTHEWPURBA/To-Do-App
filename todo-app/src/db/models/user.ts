@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from "mongodb"; // Import MongoClient and ObjectId from mongodb package
-import { hashPassword } from "../utils/bcrypt"; // Import hashPassword utility function from bcrypt
+import { comparePassword, hashPassword } from "../utils/bcrypt"; // Import hashPassword utility function from bcrypt
 import { getMongoDbInstance } from "../config"; // Import getMongoDbInstance from config
 
 const DB_NAME = process.env.MONGO_DB_NAME; // Get the database name from environment variables
@@ -62,5 +62,21 @@ export const createUser = async (newUser: User) => {
   } catch (error) {
     console.error("Error creating user:", error); // Log error to console
     throw new Error("Failed to create user"); // Throw an error
+  }
+};
+
+export const verifyUserCredentials = async (email: string, password: string) => {
+  try {
+    const db = await getDB();
+    const user = await db.collection<User>(COLLECTION_NAME).findOne({ email });
+
+    if (user && await comparePassword(password, user.password)) {
+      return user;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error verifying user credentials:", error);
+    throw new Error("Failed to verify user credentials");
   }
 };

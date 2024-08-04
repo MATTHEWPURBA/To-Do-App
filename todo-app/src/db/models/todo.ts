@@ -43,6 +43,13 @@ export const getActivities = async () => {
   }
 };
 
+export const getActivitiesByUser = async (authorId: string | ObjectId) => {
+  const db = await getDB();
+  const objectId = typeof authorId === "string" ? new ObjectId(authorId) : authorId;
+  const activities = await db.collection<Activity>(COLLECTION_NAME).find({ authorId: objectId }).toArray();
+  return activities;
+};
+
 // Helper function to get the type color based on activity status
 const getTypeColor = (status: Activity["status"]) => {
   switch (status) {
@@ -108,7 +115,7 @@ export const updateActivity = async (updatedAct: ActivityInput & { id: string | 
     const objectId = typeof updatedAct.id === "string" ? new ObjectId(updatedAct.id) : updatedAct.id; // Convert id to ObjectId if it's a string
     const authorId = new ObjectId(updatedAct.authorId); // Convert authorId string to ObjectId
 
-    const updateFields = {
+    const { id, ...updateFields } = {
       ...updatedAct,
       authorId,
       typeColor: getTypeColor(updatedAct.status), // Set typeColor based on status

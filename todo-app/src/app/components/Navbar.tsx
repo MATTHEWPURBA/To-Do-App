@@ -1,10 +1,28 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  // State to manage user's login status
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is logged in by looking for the Authorization cookie
+    const token = Cookies.get("Authorization");
+    if (token) {
+      // console.log(token,'ini token');
+    }
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/users/logout", { method: "POST" });
+    Cookies.remove("Authorization");
+    setIsLoggedIn(false);
+    router.push("/login");
+  };
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -20,7 +38,7 @@ export default function Navbar() {
               <Link href="/create-activity">
                 <p className="text-white mx-2">Create Activity</p>
               </Link>
-              <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => setIsLoggedIn(false)}>
+              <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleLogout}>
                 Log Out
               </button>
             </>

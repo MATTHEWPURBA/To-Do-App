@@ -17,12 +17,12 @@ export const POST = async (request: Request) => {
   try {
     const body = await request.json();
     const parsedBody = loginSchema.parse(body);
-    console.log(parsedBody,'ini parsed body')
     const user = await getUserByEmail(body.email);
+
     if (!user) {
       return NextResponse.json(
         {
-          message: "invalid username or password",
+          message: "invalid email or password",
         },
         {
           status: 401,
@@ -34,7 +34,7 @@ export const POST = async (request: Request) => {
     if (!isPasswordValid) {
       return NextResponse.json(
         {
-          message: "invalid username or password",
+          message: "invalid email or password",
         },
         {
           status: 401,
@@ -55,7 +55,7 @@ export const POST = async (request: Request) => {
       message: "User login Successfully",
     });
 
-    response.cookies.set("Authorization", `Bearer ${accessToken}`, { httpOnly: true, secure: true, maxAge: 3600 });
+    response.cookies.set("Authorization", `Bearer ${accessToken}`, { httpOnly: false, secure: true, maxAge: 3600 });
 
     return response;
   } catch (error) {

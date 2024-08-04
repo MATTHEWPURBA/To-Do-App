@@ -1,11 +1,11 @@
+import "./globals.css";
 import { Metadata } from "next";
-import ActivityCard from "./components/ActivityCard";
-import Sidebar from "./components/Sidebar";
-import { FaPlus } from "react-icons/fa";
 import ClientSide from "./components/ClientSide";
+import { cookies } from "next/headers";
+
 
 export type Activity = {
-  _id: number;
+  _id: string;
   content: string;
   authorId: string;
   imgUrl?: string;
@@ -21,10 +21,13 @@ export const metadata: Metadata = {
   description: "Manajemen Aktivitas",
 };
 
-async function getData(): Promise<Activity[]> {
-  const res = await fetch("http://localhost:3000/api/public/todo/", {
+async function getData(headers: HeadersInit): Promise<Activity[]> {
+  const res = await fetch("http://localhost:3000/api/todo", {
     cache: "no-store",
+    headers,
   });
+
+  // console.log(res, "ini adalah res");
   if (!res.ok) {
     throw new Error("failed to fetch data");
   }
@@ -33,25 +36,49 @@ async function getData(): Promise<Activity[]> {
 }
 
 export default async function Home() {
-  const activities = await getData(); // Fetch activities
+  try {
+    const headersList = new Headers();
+    // Get cookies on the server side using next/headers
+    const cookieStore = cookies();
+    const token = cookieStore.get("Authorization")?.value as string;
+    if (token) {
+      const decodedToken = decodeURIComponent(token);
+      const tokenParts = decodedToken.split(" ");
+      if (tokenParts.length === 2 && tokenParts[0] === "Bearer") {
+        headersList.set("Authorization", `Bearer ${tokenParts[1]}`);
+      } else {
+        throw new Error("Unauthorized");
+      }
+    } else {
+      throw new Error("Unauthorized");
+    }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <div className="max-w-4xl mx-auto p-4 w-full flex-1">
-        <h1 className="text-4xl font-bold mb-4">My Task Board</h1>
-        <p className="text-lg mb-6">Tasks to keep organized</p>
-        <ClientSide activities={activities} /> 
-        {/* //Render ClientSide component with activities */}
+    // console.log(token, 'ini token nih'); // Check if the token is retrieved correctly
+
+    const activities = await getData(headersList); // Fetch activities
+
+
+
+    return (
+      <div className="min-h-screen flex flex-col">
+        <div className="max-w-4xl mx-auto p-4 w-full flex-1">
+          <h1 className="text-4xl font-bold mb-4">My Task Board</h1>
+          <p className="text-lg mb-6">Tasks to keep organized</p>
+          <ClientSide activities={activities} />
+          {/* Render ClientSide component with activities */}
+        </div>
+        
       </div>
-      <div className="sticky bottom-0 bg-white p-4 border-t border-gray-300 max-w-4xl mx-auto w-full">
-        <button className="flex items-center bg-orange-100 text-opacity-80 text-black py-4 px-5 rounded-2xl w-full justify-start text-xl font-semibold border border-gray-200">
-          <span className="bg-orange-400 p-3 rounded-full mr-4">
-            <FaPlus className="text-4xl text-white" /> 
-            {/* //Render Plus icon */}
-          </span>
-          Add New Task
-        </button>
+    );
+  } catch (error) {
+    console.error("Error in Home component:", error);
+    return (
+      <div className="min-h-screen flex flex-col">
+        <div className="max-w-4xl mx-auto p-4 w-full flex-1">
+          <h1 className="text-4xl font-bold mb-4">My Task Board</h1>
+          <p className="text-lg mb-6">Failed to fetch tasks. Please try again later.</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

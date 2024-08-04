@@ -1,49 +1,162 @@
-    "use client"; // Ensure this component runs on the client side
+"use client"; // Ensure this component runs on the client side
 
-    import { Activity } from "../page"; // Import Activity type
+import React, { useEffect, useState } from "react";
+import { Activity } from "../page"; // Import Activity type
+import { updateActivity } from "./UpdateActivity";
+import { useRouter } from "next/navigation";
 
-    type SidebarProps = {
-    activity: Activity | null; // Define props type
+// Define the props type for Sidebar
+type SidebarProps = {
+  activity: Activity | null; // The activity to be edited
+  setSelectedActivity: (activity: Activity | null) => void; // Function to clear the selected activity
+  // onUpdate: (id: string, updatedData: Record<string, any>) => void;
+  onUpdate: (activity: Activity) => void; // Add onUpdate prop
+};
+
+// Define the possible status values
+type Status = "in progress" | "completed" | "won't do";
+// Sidebar component definition
+const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
+  //     // State to manage form data
+
+  // #1 Way
+  //   const [formData, setFormData] = useState<FormData>(new FormData());
+
+  //   // Effect to initialize form data when activity changes
+  //   useEffect(() => {
+  //     if (activity) {
+  //       const newFormData = new FormData();
+  //       newFormData.append("content", activity.content);
+  //       newFormData.append("description", activity.description);
+  //       newFormData.append("status", activity.status);
+  //       setFormData(newFormData);
+  //     }
+  //   }, [activity]);
+
+  //useEffect nya belom paham ni gua fungsi nya
+  // #1 Way
+
+  // #2 Way
+  const router = useRouter(); // Initialize the router
+
+  const [formData, setFormData] = useState({
+    content: "",
+    description: "",
+    status: "" as Status,
+  });
+
+  useEffect(() => {
+    if (activity) {
+      setFormData({
+        content: activity.content,
+        description: activity.description,
+        status: activity.status,
+      });
+    }
+  }, [activity]);
+
+  // #2 Way
+
+  // Function to close the sidebar
+  const handleClose = () => {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar) {
+      sidebar.classList.remove("open"); // Close the sidebar
+    }
+    setSelectedActivity(null); // Clear the selected activity
+  };
+
+  //  #1 Way
+
+  // // Function to handle form field changes
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   formData.set(name, value);
+  //   setFormData(new FormData(formData)); // Update form data state
+  // };
+
+  // // Function to handle form submission
+  // const onSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   updateActivity(formData, activity?._id || null, handleClose); // Update the activity
+  // };
+
+  // #1 Way
+
+  //#2 Way
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // const updatedFormData = new FormData();
+    // updatedFormData.append("content", formData.content);
+    // updatedFormData.append("description", formData.description);
+    // updatedFormData.append("status", formData.status);
+    // updateActivity(updatedFormData, activity?._id || null, handleClose);
+    const updatedData = {
+      content: formData.content,
+      description: formData.description,
+      status: formData.status,
     };
 
-    const Sidebar = ({ activity }: SidebarProps) => {
-    const handleClose = () => {
-        const sidebar = document.getElementById("sidebar");
-        if (sidebar) {
-        sidebar.classList.remove("open"); // Close the sidebar
-        }
-    };
+    if (activity?._id) {
+      try {
+        const updatedActivity = await updateActivity(activity._id, updatedData);
+        onUpdate(updatedActivity);
+        console.log("Activity updated successfully:", updatedActivity);
+        handleClose();
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Error updating activity:", error);
+      }
+    }
+  };
 
-    return (
-        <div id="sidebar" className="fixed right-0 top-0 w-1/3 h-full bg-gray-100 shadow-lg transform transition-transform duration-300 translate-x-full">
-        <div className="p-4">
-            <button onClick={handleClose} className="text-red-500 font-bold mb-4">
-            Close
-            </button>
-            {activity && (
-            <>
-                <h2 className="text-2xl font-bold mb-4">Edit Task</h2>
-                <form>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Content</label>
-                    <input type="text" value={activity.content} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
-                    <textarea value={activity.description} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                {/* Add other fields as necessary */}
-                <div className="mt-4">
-                    <button type="submit" className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md">
-                    Save
-                    </button>
-                </div>
-                </form>
-            </>
-            )}
-        </div>
-        </div>
-    );
-    };
+  //#2 Way
 
-    export default Sidebar;
+  return (
+    <div id="sidebar" className="fixed right-0 top-0 w-1/3 h-full bg-gray-100 shadow-lg transform transition-transform duration-300 translate-x-full">
+      <div className="p-4">
+        <button onClick={handleClose} className="text-red-500 font-bold mb-4">
+          Close
+        </button>
+        {activity && (
+          <>
+            <h2 className="text-2xl font-bold mb-4">Edit Task</h2>
+            <form onSubmit={onSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Content</label>
+                <input type="text" name="content" value={formData.content} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <textarea name="description" value={formData.description} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Status</label>
+                <select name="status" value={formData.status} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                  <option value="in progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="won't do">Won't Do</option>
+                </select>
+              </div>
+              <div className="mt-4">
+                <button type="submit" className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md">
+                  Save
+                </button>
+              </div>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+export default Sidebar;
