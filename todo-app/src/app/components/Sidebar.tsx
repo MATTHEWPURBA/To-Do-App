@@ -1,10 +1,10 @@
-"use client"; // Ensure this component runs on the client side
+'use client'; // Ensure this component runs on the client side
 
-import React, { useEffect, useState } from "react";
-import { Activity } from "../page"; // Import Activity type
-import { updateActivity } from "./UpdateActivity";
-import { useRouter } from "next/navigation";
-import IconPicker from "./IconPicker"; // Import IconPicker component
+import React, { useEffect, useState } from 'react';
+import { Activity } from '../page'; // Import Activity type
+import { updateActivity } from './UpdateActivity';
+import { useRouter } from 'next/navigation';
+import IconPicker from './IconPicker'; // Import IconPicker component
 
 // Define the props type for Sidebar
 type SidebarProps = {
@@ -15,7 +15,7 @@ type SidebarProps = {
 };
 
 // Define the possible status values
-type Status = "in progress" | "completed" | "won't do";
+type Status = 'in progress' | 'completed' | "won't do";
 // Sidebar component definition
 const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
   //     // State to manage form data
@@ -41,14 +41,14 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
   const router = useRouter(); // Initialize the router
 
   const [formData, setFormData] = useState({
-    content: "",
-    description: "",
-    status: "" as Status,
-    imgUrl: "", // Added imgUrl field
-
+    content: '',
+    description: '',
+    status: '' as Status,
+    imgUrl: '', // Added imgUrl field
   });
-  const [selectedIcon, setSelectedIcon] = useState<string>(activity?.imgUrl ?? "");
-
+  const [selectedIcon, setSelectedIcon] = useState<string>(
+    activity?.imgUrl ?? ''
+  );
 
   useEffect(() => {
     if (activity) {
@@ -56,9 +56,9 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
         content: activity.content,
         description: activity.description,
         status: activity.status,
-        imgUrl: activity.imgUrl ?? "", // Provide a default empty string if imgUrl is undefined
+        imgUrl: activity.imgUrl ?? '', // Provide a default empty string if imgUrl is undefined
       });
-      setSelectedIcon(activity.imgUrl ?? ""); // Provide a default empty string if imgUrl is undefined
+      setSelectedIcon(activity.imgUrl ?? ''); // Provide a default empty string if imgUrl is undefined
     }
   }, [activity]);
 
@@ -66,9 +66,9 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
 
   // Function to close the sidebar
   const handleClose = () => {
-    const sidebar = document.getElementById("sidebar");
+    const sidebar = document.getElementById('sidebar');
     if (sidebar) {
-      sidebar.classList.remove("open"); // Close the sidebar
+      sidebar.classList.remove('open'); // Close the sidebar
     }
     setSelectedActivity(null); // Clear the selected activity
   };
@@ -92,7 +92,11 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
 
   //#2 Way
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -118,11 +122,11 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
       try {
         const updatedActivity = await updateActivity(activity._id, updatedData);
         onUpdate(updatedActivity);
-        console.log("Activity updated successfully:", updatedActivity);
+        console.log('Activity updated successfully:', updatedActivity);
         handleClose();
-        window.location.href = "/";
+        window.location.href = '/';
       } catch (error) {
-        console.error("Error updating activity:", error);
+        console.error('Error updating activity:', error);
       }
     }
   };
@@ -130,34 +134,71 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
   //#2 Way
 
   return (
-    <div id="sidebar" className="fixed right-0 top-0 w-1/3 h-full bg-gray-100 shadow-lg transform transition-transform duration-300 translate-x-full">
+    <div
+      id="sidebar"
+      className="fixed right-0 top-0 w-1/3 h-full bg-gray-100 shadow-lg transform transition-transform duration-300 translate-x-full"
+    >
       <div className="p-4">
-        <button onClick={handleClose} className="text-red-500 font-bold mb-4">Close</button>
+        <button onClick={handleClose} className="text-red-500 font-bold mb-4">
+          Close
+        </button>
         {activity && (
           <>
             <h2 className="text-2xl font-bold mb-4">Edit Task</h2>
             <form onSubmit={onSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Content</label>
-                <input type="text" name="content" value={formData.content} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                <label className="block text-sm font-medium text-gray-700">
+                  Content
+                </label>
+                <input
+                  type="text"
+                  name="content"
+                  value={formData.content}
+                  onChange={handleChange}
+                  className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                <label className="block text-sm font-medium text-gray-700">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Status</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                <label className="block text-sm font-medium text-gray-700">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                >
                   <option value="in progress">In Progress</option>
                   <option value="completed">Completed</option>
                   <option value="won't do">Won't Do</option>
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Pick an Icon</label>
-                <IconPicker selectedIcon={selectedIcon} onSelectIcon={setSelectedIcon} />
+                <label className="block text-sm font-medium text-gray-700">
+                  Pick an Icon
+                </label>
+                <IconPicker
+                  selectedIcon={selectedIcon}
+                  onSelectIcon={setSelectedIcon}
+                />
               </div>
-              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Update
+              </button>
             </form>
           </>
         )}
