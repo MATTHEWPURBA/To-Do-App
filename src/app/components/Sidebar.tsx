@@ -167,7 +167,7 @@ const Sidebar = ({
                 >
                   <option value="in progress">In Progress</option>
                   <option value="completed">Completed</option>
-                  <option value="won't do">Won't Do</option>
+                  <option value="won&apos;t do">Won&apos;t Do</option>
                 </select>
               </div>
               <div className="mb-4">
