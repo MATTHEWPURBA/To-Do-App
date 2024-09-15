@@ -9,7 +9,8 @@ export async function handleLogin(formData: FormData) {
     password,
   };
 
-  const response = await fetch('http://localhost:3000/api/users/login', {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const response = await fetch(`${apiUrl}/api/users/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

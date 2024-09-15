@@ -13,7 +13,8 @@ export const updateActivity = async (
     token = decodeURIComponent(token);
     const tokenParts = token.split(' ');
     const tokens = tokenParts[1];
-    const response = await fetch(`http://localhost:3000/api/todo/${id}`, {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/todo/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -40,8 +41,8 @@ export const deleteActivity = async (id: string): Promise<void> => {
       cookieStore.get('Authorization')?.value ?? ''
     );
     const tokenValue = token.split(' ')[1];
-
-    const response = await fetch(`http://localhost:3000/api/todo/${id}`, {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/todo/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${tokenValue}`,

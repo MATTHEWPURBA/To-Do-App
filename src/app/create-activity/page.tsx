@@ -45,8 +45,9 @@ const CreateActivity = () => {
 
     try {
       const imgUrl = iconUrlMap[selectedIcon]; // Get local image URL
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      const res = await fetch('/api/todo', {
+      const res = await fetch(`${apiUrl}/api/todo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

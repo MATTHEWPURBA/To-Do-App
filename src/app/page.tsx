@@ -21,12 +21,13 @@ export const metadata: Metadata = {
 };
 
 async function getData(headers: HeadersInit): Promise<Activity[]> {
-  const res = await fetch('http://localhost:3000/api/todo', {
+  // Use the environment variable for the API URL
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const res = await fetch(`${apiUrl}/api/todo`, {
     cache: 'no-store',
     headers,
   });
 
-  // console.log(res, "ini adalah res");
   if (!res.ok) {
     throw new Error('failed to fetch data');
   }
@@ -37,9 +38,9 @@ async function getData(headers: HeadersInit): Promise<Activity[]> {
 export default async function Home() {
   try {
     const headersList = new Headers();
-    // Get cookies on the server side using next/headers
     const cookieStore = cookies();
     const token = cookieStore.get('Authorization')?.value as string;
+
     if (token) {
       const decodedToken = decodeURIComponent(token);
       const tokenParts = decodedToken.split(' ');
@@ -52,8 +53,6 @@ export default async function Home() {
       throw new Error('Unauthorized');
     }
 
-    // console.log(token, 'ini token nih'); // Check if the token is retrieved correctly
-
     const activities = await getData(headersList); // Fetch activities
 
     return (
@@ -62,7 +61,6 @@ export default async function Home() {
           <h1 className="text-4xl font-bold mb-4">My Task Board</h1>
           <p className="text-lg mb-6">Tasks to keep organized</p>
           <ClientSide activities={activities} />
-          {/* Render ClientSide component with activities */}
         </div>
       </div>
     );
