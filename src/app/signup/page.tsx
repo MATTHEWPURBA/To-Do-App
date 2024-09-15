@@ -1,19 +1,19 @@
-// src/app/login/page.tsx
+// src/app/signup/page.tsx
 'use client';
 
 import { useState } from 'react';
-import { handleLogin } from '../components/LoginAction';
+import { handleSignup } from '../components/SignupAction'; // You need to implement handleSignup function
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     try {
-      const result = await handleLogin(formData);
-      // Redirect to home page after successful login
-      window.location.href = '/';
+      const result = await handleSignup(formData);
+      // Redirect to login page after successful signup
+      window.location.href = '/login';
     } catch (err: any) {
       setError(err.message);
     }
@@ -21,8 +21,23 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold mb-4">Login</h1>
+      <h1 className="text-4xl font-bold mb-4">Sign Up</h1>
       <form onSubmit={handleSubmit} className="w-full max-w-sm">
+        <div className="mb-4">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Username
+          </label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
         <div className="mb-4">
           <label
             htmlFor="email"
@@ -58,7 +73,7 @@ export default function LoginPage() {
           type="submit"
           className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600"
         >
-          Login
+          Sign Up
         </button>
       </form>
     </div>

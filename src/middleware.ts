@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip public paths from authentication
-  const publicPaths = ["/login", "/register", "/_next", "/favicon.ico", "/api/users"];
+  const publicPaths = ["/login", "/signup", "/_next", "/favicon.ico", "/api/users"];
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }

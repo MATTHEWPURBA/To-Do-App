@@ -18,8 +18,8 @@ export default function Navbar() {
     try {
       // Use the NEXT_PUBLIC_API_URL to make the logout request
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      const response = await fetch(`${apiUrl}/api/users/logout`, { 
-        method: "POST" 
+      const response = await fetch(`${apiUrl}/api/users/logout`, {
+        method: 'POST',
       });
 
       if (!response.ok) {
@@ -27,14 +27,13 @@ export default function Navbar() {
       }
 
       // Remove the authorization cookie and redirect to login
-      Cookies.remove("Authorization");
+      Cookies.remove('Authorization');
       setIsLoggedIn(false);
-      router.push("/login");
+      router.push('/login');
     } catch (error) {
-      console.error("Failed to log out:", error);
+      console.error('Failed to log out:', error);
     }
   };
-
 
   return (
     <nav className="bg-gray-800 p-4">
