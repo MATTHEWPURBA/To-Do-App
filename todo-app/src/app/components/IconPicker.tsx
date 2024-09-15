@@ -1,12 +1,6 @@
 'use client';
 
 import React from 'react';
-import {
-  FaCheckCircle,
-  FaHourglassHalf,
-  FaTimesCircle,
-  FaQuestionCircle,
-} from 'react-icons/fa';
 
 type IconPickerProps = {
   selectedIcon: string;
@@ -14,16 +8,17 @@ type IconPickerProps = {
 };
 
 const icons = [
-  { name: 'FaCheckCircle', icon: FaCheckCircle },
-  { name: 'FaHourglassHalf', icon: FaHourglassHalf },
-  { name: 'FaTimesCircle', icon: FaTimesCircle },
-  { name: 'FaQuestionCircle', icon: FaQuestionCircle },
+  { name: 'alarmClock', imgSrc: '/img/alarm_clock.png' },
+  { name: 'books', imgSrc: '/img/books.png' },
+  { name: 'coffee', imgSrc: '/img/coffee.png' },
+  { name: 'speechBalloon', imgSrc: '/img/speech_balloon.png' },
+  { name: 'weightLifter', imgSrc: '/img/weight_lifter.png' },
 ];
 
 const IconPicker = ({ selectedIcon, onSelectIcon }: IconPickerProps) => {
   return (
     <div className="flex flex-wrap gap-4">
-      {icons.map(({ name, icon: Icon }) => (
+      {icons.map(({ name, imgSrc }) => (
         <div
           key={name}
           className={`p-2 cursor-pointer ${
@@ -31,7 +26,7 @@ const IconPicker = ({ selectedIcon, onSelectIcon }: IconPickerProps) => {
           }`}
           onClick={() => onSelectIcon(name)}
         >
-          <Icon className="text-3xl" />
+          <img src={imgSrc} alt={name} className="w-12 h-12" />
         </div>
       ))}
     </div>

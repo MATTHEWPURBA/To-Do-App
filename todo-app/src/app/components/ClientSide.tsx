@@ -23,6 +23,7 @@ const ClientSide = ({ activities: initialActivities }: ClientSideProps) => {
     router.push('/create-activity');
   };
 
+
   useEffect(() => {
     const socket = io('http://localhost:8080/');
     console.log(socket, 'ini socket nih');
@@ -69,6 +70,9 @@ const ClientSide = ({ activities: initialActivities }: ClientSideProps) => {
     );
   };
 
+
+
+
   return (
     <>
       <div className="space-y-4">
@@ -91,6 +95,7 @@ const ClientSide = ({ activities: initialActivities }: ClientSideProps) => {
       <Sidebar
         activity={selectedActivity}
         setSelectedActivity={setSelectedActivity}
+        
         onUpdate={(updatedActivity: Activity) => {
           setActivities((prevActivities) =>
             prevActivities.map((activity) =>
@@ -99,6 +104,11 @@ const ClientSide = ({ activities: initialActivities }: ClientSideProps) => {
           );
           router.refresh(); // Refresh the page after updating activity
         }}
+
+
+        onDelete={removeActivityFromList}
+        
+
       />
 
       <div className="sticky bottom-0 bg-white p-4 border-t border-gray-300 max-w-4xl mx-auto w-full mt-16">

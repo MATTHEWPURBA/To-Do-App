@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Activity } from '../page'; // Import Activity type
-import { updateActivity } from './UpdateActivity';
+import { deleteActivity, updateActivity } from './EditActivity';
 import { useRouter } from 'next/navigation';
 import IconPicker from './IconPicker'; // Import IconPicker component
 
@@ -12,12 +12,18 @@ type SidebarProps = {
   setSelectedActivity: (activity: Activity | null) => void; // Function to clear the selected activity
   // onUpdate: (id: string, updatedData: Record<string, any>) => void;
   onUpdate: (activity: Activity) => void; // Add onUpdate prop
+  onDelete: (id: string) => void;
 };
 
 // Define the possible status values
 type Status = 'in progress' | 'completed' | "won't do";
 // Sidebar component definition
-const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
+const Sidebar = ({
+  activity,
+  setSelectedActivity,
+  onUpdate,
+  onDelete,
+}: SidebarProps) => {
   //     // State to manage form data
 
   // #1 Way
@@ -133,6 +139,18 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
 
   //#2 Way
 
+  const handleDelete = async () => {
+    if (activity?._id) {
+      try {
+        await deleteActivity(activity._id);
+        onDelete(activity._id);
+        setSelectedActivity(null);
+      } catch (error) {
+        console.error('Error deleting activity:', error);
+      }
+    }
+  };
+
   return (
     <div
       id="sidebar"
@@ -195,9 +213,15 @@ const Sidebar = ({ activity, setSelectedActivity, onUpdate }: SidebarProps) => {
               </div>
               <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-blue-500 text-white px-4 py-2 rounded mr-4" // Add more space between buttons with `mr-4`
               >
                 Update
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Delete
               </button>
             </form>
           </>

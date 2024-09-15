@@ -7,10 +7,11 @@ import IconPicker from '../components/IconPicker';
 import { io } from 'socket.io-client';
 
 const iconUrlMap: { [key: string]: string } = {
-  FaCheckCircle: 'https://example.com/icons/check-circle.png',
-  FaHourglassHalf: 'https://example.com/icons/hourglass-half.png',
-  FaTimesCircle: 'https://example.com/icons/times-circle.png',
-  FaQuestionCircle: 'https://example.com/icons/question-circle.png',
+  alarmClock: '/img/alarm_clock.png',
+  books: '/img/books.png',
+  coffee: '/img/coffee.png',
+  speechBalloon: '/img/speech_balloon.png',
+  weightLifter: '/img/weight_lifter.png',
 };
 
 const CreateActivity = () => {
@@ -30,18 +31,10 @@ const CreateActivity = () => {
     >
   ) => {
     const { name, value } = e.target;
-    // Handling different types of form elements
-    if (e.target instanceof HTMLSelectElement) {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,15 +44,15 @@ const CreateActivity = () => {
     setError(null);
 
     try {
-      const imgUrl = iconUrlMap[selectedIcon];
+      const imgUrl = iconUrlMap[selectedIcon]; // Get local image URL
 
       const res = await fetch('/api/todo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${tokens}`, // Replace with your actual token if needed
+          Authorization: `Bearer ${tokens}`,
         },
-        body: JSON.stringify({ ...formData, imgUrl }),
+        body: JSON.stringify({ ...formData, imgUrl }), // Include the imgUrl in the payload
       });
 
       if (!res.ok) {
@@ -68,9 +61,8 @@ const CreateActivity = () => {
         return;
       }
 
-      const newActivity = await res.json(); // Assuming your API returns the created activity
+      const newActivity = await res.json();
 
-      // Optional: If the server doesn't handle socket broadcasting, emit the new activity
       const socket = io('http://localhost:8080/');
       socket.emit('activityCreated', newActivity);
 

@@ -8,41 +8,42 @@ import {
   FaQuestionCircle,
 } from 'react-icons/fa'; // Import icons
 import { Activity } from '../page';
+import styles from './ActivityCard.module.css'; // Import the CSS module
+
 
 type ActivityCardProps = {
   activity: Activity; // Define props type
   onClick: () => void; // Define onClick handler type
 };
 
-// Helper function to get border color class
-const getBorderColorClass = (typeColor: string) => {
-  switch (typeColor) {
-    case 'green':
-      return 'border-green-500';
-    case 'yellow':
-      return 'border-yellow-500';
-    case 'red':
-      return 'border-red-500';
-    case 'blue':
-      return 'border-blue-500';
-    default:
-      return 'border-gray-500';
-  }
-};
-
-// Helper function to get background color class
+// Helper function to get the background color class
 const getBackgroundColorClass = (status: string) => {
   switch (status) {
     case 'completed':
-      return 'bg-green-100';
+      return styles.bgGreen;
     case 'in progress':
-      return 'bg-yellow-50';
+      return styles.bgYellow;
     case "won't do":
-      return 'bg-red-100';
+      return styles.bgRed;
     default:
-      return 'bg-gray-200';
+      return styles.bgGray;
   }
 };
+
+// Helper function to get the border color class
+const getBorderColorClass = (typeColor: string) => {
+  switch (typeColor) {
+    case 'green':
+      return styles.borderGreen;
+    case 'yellow':
+      return styles.borderYellow;
+    case 'red':
+      return styles.borderRed;
+    default:
+      return styles.borderGray;
+  }
+};
+
 
 // Helper function to get status icon color class
 const getStatusColorIconClass = (status: string) => {
@@ -99,7 +100,7 @@ const ActivityCard = ({ activity, onClick }: ActivityCardProps) => {
         <img
           src={activity.imgUrl}
           alt={activity.content}
-          className="w-20 h-20 object-cover rounded-lg mr-4"
+          className={styles.activityImage}
         />
       )}
       <div className="flex-grow">

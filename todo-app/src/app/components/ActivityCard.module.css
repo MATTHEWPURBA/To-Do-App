@@ -1,0 +1,51 @@
+/* components/ActivityCard.module.css */
+
+.activityCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.activityImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+
+.bgGreen {
+  background-color: #f2fbf5; /* Very light green */
+}
+
+.bgYellow {
+  background-color: #fffdf2; /* Very light yellow */
+}
+
+.bgRed {
+  background-color: #fdf3f3; /* Very light red */
+}
+
+.bgGray {
+  background-color: #fafbfc; /* Very light gray */
+}
+
+.borderGreen {
+  border-left: 4px solid #28a745; /* Green border */
+}
+
+.borderYellow {
+  border-left: 4px solid #ffc107; /* Yellow border */
+}
+
+.borderRed {
+  border-left: 4px solid #dc3545; /* Red border */
+}
+
+.borderGray {
+  border-left: 4px solid #6c757d; /* Gray border */
+}
