@@ -1,4 +1,4 @@
-'use client'; // Ensure this component runs on the client side
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Activity } from '../page'; // Import Activity type
@@ -6,97 +6,59 @@ import { deleteActivity, updateActivity } from './EditActivity';
 import { useRouter } from 'next/navigation';
 import IconPicker from './IconPicker'; // Import IconPicker component
 
-// Define the props type for Sidebar
 type SidebarProps = {
-  activity: Activity | null; // The activity to be edited
-  setSelectedActivity: (activity: Activity | null) => void; // Function to clear the selected activity
-  // onUpdate: (id: string, updatedData: Record<string, any>) => void;
-  onUpdate: (activity: Activity) => void; // Add onUpdate prop
+  activity: Activity | null;
+  setSelectedActivity: (activity: Activity | null) => void;
+  onUpdate: (activity: Activity) => void;
   onDelete: (id: string) => void;
 };
 
-// Define the possible status values
 type Status = 'in progress' | 'completed' | "won't do";
-// Sidebar component definition
+
+// Helper function to get icon name from URL
+const getIconNameFromUrl = (url: string): string => {
+  const iconUrlMap: { [key: string]: string } = {
+    alarm_clock: '/img/alarm_clock.png',
+    books: '/img/books.png',
+    coffee: '/img/coffee.png',
+    speech_balloon: '/img/speech_balloon.png', // Ensure this matches the actual filename
+    weight_lifter: '/img/weight_lifter.png',
+  };
+
+  return (
+    Object.entries(iconUrlMap).find(([iconUrl]) => iconUrl === url)?.[1] ?? ''
+  );
+};
+
 const Sidebar = ({
   activity,
   setSelectedActivity,
   onUpdate,
   onDelete,
 }: SidebarProps) => {
-  //     // State to manage form data
-
-  // #1 Way
-  //   const [formData, setFormData] = useState<FormData>(new FormData());
-
-  //   // Effect to initialize form data when activity changes
-  //   useEffect(() => {
-  //     if (activity) {
-  //       const newFormData = new FormData();
-  //       newFormData.append("content", activity.content);
-  //       newFormData.append("description", activity.description);
-  //       newFormData.append("status", activity.status);
-  //       setFormData(newFormData);
-  //     }
-  //   }, [activity]);
-
-  //useEffect nya belom paham ni gua fungsi nya
-  // #1 Way
-
-  // #2 Way
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     content: '',
     description: '',
     status: '' as Status,
-    imgUrl: '', // Added imgUrl field
+    imgUrl: '',
   });
-  const [selectedIcon, setSelectedIcon] = useState<string>(
-    activity?.imgUrl ?? ''
-  );
+
+  const [selectedIcon, setSelectedIcon] = useState<string>('');
 
   useEffect(() => {
     if (activity) {
+      const iconName = getIconNameFromUrl(activity?.imgUrl ?? '');
       setFormData({
         content: activity.content,
         description: activity.description,
         status: activity.status,
-        imgUrl: activity.imgUrl ?? '', // Provide a default empty string if imgUrl is undefined
+        imgUrl: activity.imgUrl ?? '',
       });
-      setSelectedIcon(activity.imgUrl ?? ''); // Provide a default empty string if imgUrl is undefined
+      setSelectedIcon(iconName);
     }
   }, [activity]);
-
-  // #2 Way
-
-  // Function to close the sidebar
-  const handleClose = () => {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) {
-      sidebar.classList.remove('open'); // Close the sidebar
-    }
-    setSelectedActivity(null); // Clear the selected activity
-  };
-
-  //  #1 Way
-
-  // // Function to handle form field changes
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   formData.set(name, value);
-  //   setFormData(new FormData(formData)); // Update form data state
-  // };
-
-  // // Function to handle form submission
-  // const onSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   updateActivity(formData, activity?._id || null, handleClose); // Update the activity
-  // };
-
-  // #1 Way
-
-  //#2 Way
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -112,17 +74,17 @@ const Sidebar = ({
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // const updatedFormData = new FormData();
-    // updatedFormData.append("content", formData.content);
-    // updatedFormData.append("description", formData.description);
-    // updatedFormData.append("status", formData.status);
-    // updateActivity(updatedFormData, activity?._id || null, handleClose);
+
+    console.log('Selected Icon before submit:', selectedIcon); // Debugging log
+
     const updatedData = {
       content: formData.content,
       description: formData.description,
       status: formData.status,
-      imgUrl: selectedIcon, // Include selectedIcon
+      imgUrl: selectedIcon ? `/img/${selectedIcon}.png` : formData.imgUrl,
     };
+
+    console.log('Updated Data:', updatedData); // Debugging log to inspect data before updating
 
     if (activity?._id) {
       try {
@@ -137,8 +99,6 @@ const Sidebar = ({
     }
   };
 
-  //#2 Way
-
   const handleDelete = async () => {
     if (activity?._id) {
       try {
@@ -149,6 +109,14 @@ const Sidebar = ({
         console.error('Error deleting activity:', error);
       }
     }
+  };
+
+  const handleClose = () => {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.remove('open');
+    }
+    setSelectedActivity(null);
   };
 
   return (
@@ -213,7 +181,7 @@ const Sidebar = ({
               </div>
               <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded mr-4" // Add more space between buttons with `mr-4`
+                className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
               >
                 Update
               </button>
@@ -230,4 +198,5 @@ const Sidebar = ({
     </div>
   );
 };
+
 export default Sidebar;

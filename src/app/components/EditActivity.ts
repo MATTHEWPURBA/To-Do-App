@@ -36,7 +36,9 @@ export const updateActivity = async (
 export const deleteActivity = async (id: string): Promise<void> => {
   try {
     const cookieStore = cookies();
-    const token = decodeURIComponent(cookieStore.get('Authorization')?.value ?? '');
+    const token = decodeURIComponent(
+      cookieStore.get('Authorization')?.value ?? ''
+    );
     const tokenValue = token.split(' ')[1];
 
     const response = await fetch(`http://localhost:3000/api/todo/${id}`, {

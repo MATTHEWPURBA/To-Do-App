@@ -8,11 +8,11 @@ type IconPickerProps = {
 };
 
 const icons = [
-  { name: 'alarmClock', imgSrc: '/img/alarm_clock.png' },
+  { name: 'alarm_clock', imgSrc: '/img/alarm_clock.png' },
   { name: 'books', imgSrc: '/img/books.png' },
   { name: 'coffee', imgSrc: '/img/coffee.png' },
-  { name: 'speechBalloon', imgSrc: '/img/speech_balloon.png' },
-  { name: 'weightLifter', imgSrc: '/img/weight_lifter.png' },
+  { name: 'speech_balloon', imgSrc: '/img/speech_balloon.png' },
+  { name: 'weight_lifter', imgSrc: '/img/weight_lifter.png' },
 ];
 
 const IconPicker = ({ selectedIcon, onSelectIcon }: IconPickerProps) => {

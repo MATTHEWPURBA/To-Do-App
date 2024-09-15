@@ -81,14 +81,6 @@ const ActivityCard = ({ activity, onClick }: ActivityCardProps) => {
   const backgroundColorClass = getBackgroundColorClass(activity.status);
   const statusColorIconClass = getStatusColorIconClass(activity.status);
 
-  // Logging for debugging
-  console.log('ActivityCard Debug Info:');
-  console.log('Activity ID:', activity._id);
-  console.log('Activity Status:', activity.status);
-  console.log('Type Color:', activity.typeColor);
-  console.log('Computed Border Color Class:', borderColorClass);
-  console.log('Computed Background Color Class:', backgroundColorClass);
-  console.log('Computed Status Icon Color Class:', statusColorIconClass);
 
   return (
     <div

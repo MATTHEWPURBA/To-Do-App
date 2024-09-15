@@ -7,11 +7,11 @@ import IconPicker from '../components/IconPicker';
 import { io } from 'socket.io-client';
 
 const iconUrlMap: { [key: string]: string } = {
-  alarmClock: '/img/alarm_clock.png',
+  alarm_clock: '/img/alarm_clock.png',
   books: '/img/books.png',
   coffee: '/img/coffee.png',
-  speechBalloon: '/img/speech_balloon.png',
-  weightLifter: '/img/weight_lifter.png',
+  speech_balloon: '/img/speech_balloon.png',
+  weight_lifter: '/img/weight_lifter.png',
 };
 
 const CreateActivity = () => {
